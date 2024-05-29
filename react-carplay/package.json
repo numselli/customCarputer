@@ -45,7 +45,7 @@
     "vite-plugin-esmodule": "^1.5.0",
     "zustand": "^4.4.5",
     "socketcan": "^4.0.4",
-    "socketmost": "^2.0.6"
+    "socketmost": "^2.1.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^1.0.1",
