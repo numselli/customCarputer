@@ -5,8 +5,6 @@ import './App.css'
 import Home from "./components/Home";
 import Nav from "./components/Nav";
 import Carplay from './components/Carplay'
-import Camera from './components/Camera'
-import { Box, Modal } from '@mui/material'
 import { useCarplayStore, useStatusStore } from "./store/store";
 
 // rm -rf node_modules/.vite; npm run dev
@@ -72,16 +70,7 @@ function App() {
         <Routes>
           <Route path={"/"} element={<Home />} />
           <Route path={"/settings"} element={<Settings settings={settings!}/>} />
-          <Route path={"/camera"} element={<Camera settings={settings!}/>} />
         </Routes>
-        <Modal
-          open={reverse}
-          onClick={()=> setReverse(false)}
-        >
-          <Box sx={style}>
-            <Camera settings={settings}/>
-          </Box>
-        </Modal>
       </div>
     </Router>
 
