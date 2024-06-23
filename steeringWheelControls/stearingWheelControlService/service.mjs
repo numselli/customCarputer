@@ -6,52 +6,63 @@ const port = new SerialPort({
     baudRate: 9600,
 })
 
-port.on('data', async(data) => {
+port.on('data', async (data) => {
     const readableData = data.toString()
+    const prams = readableData.split(":")
 
-    switch(readableData){
-        case "playPause": {
-            execCommand("playerctl play-pause")
-        }
-        break;
-        case "volUP": {
-            const volumeMuted = (await execCommand("pactl get-sink-mute @DEFAULT_SINK@")).includes("yes")
-            
-            if (volumeMuted){
-                await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 0")
-                await execCommand("pactl set-sink-volume @DEFAULT_SINK@ 0")
+    const catagory = prams[0]
+    const reading = Number(prams[1])
+
+    switch (catagory) {
+        case "btnOneReading": {
+            if (reading >= 509 && reading <= 517) {
+                return;
             }
 
-            execCommand("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-        }
-        break;
-        case "volDown": {
-            await execCommand("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+            if (reading >= 1013 && reading <= 1014) {
+                const volumeMuted = (await execCommand("pactl get-sink-mute @DEFAULT_SINK@")).includes("yes")
 
-            const volumeLevels = (await execCommand("pactl get-sink-volume @DEFAULT_SINK@"))
-            const volumeLevelArray = volumeLevels.split("/")
+                if (volumeMuted) {
+                    await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 0")
+                    await execCommand("pactl set-sink-volume @DEFAULT_SINK@ 0")
+                }
 
-            const leftVolume = volumeLevelArray[1].trim()
-            const rightVolume = volumeLevelArray[3].trim()
+                execCommand("pactl set-sink-volume @DEFAULT_SINK@ +5%")
+            } else if (reading >= 992 && reading <= 994) {
+                await execCommand("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 
-            if (leftVolume === "0%" && rightVolume === "0%") await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 1")
+                const volumeLevels = (await execCommand("pactl get-sink-volume @DEFAULT_SINK@"))
+                const volumeLevelArray = volumeLevels.split("/")
+
+                const leftVolume = volumeLevelArray[1].trim()
+                const rightVolume = volumeLevelArray[3].trim()
+
+                if (leftVolume === "0%" && rightVolume === "0%") await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 1")
+            } else if (reading >= 1019 && reading <= 1020) {
+                execCommand("playerctl previous")
+            } else if (reading >= 1022 && reading <= 1023) {
+                execCommand("playerctl next")
+            } else {
+                console.log(readableData)
+            }
         }
-        break;
-        case "trackBack": {
-            execCommand("playerctl previous")
+            break;
+        case "btnTwoReading": {
+            if (reading >= 509 && reading <= 517) {
+                return;
+            }
+
+            if (reading >= 1022 && reading <= 1024) {
+                execCommand("playerctl play-pause")
+            } else {
+                console.log(readableData)
+            }
         }
-        break;
-        case "trackNext": {
-            execCommand("playerctl next")
-        }
-        break;
-        default: {
-            console.log(readableData)
-        }
+            break;
     }
 })
 
-function execCommand(command){
+function execCommand(command) {
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
             if (error) {
@@ -67,5 +78,3 @@ function execCommand(command){
         });
     });
 }
-
-// sudo pacman -S playerctl
