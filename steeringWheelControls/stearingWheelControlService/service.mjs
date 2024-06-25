@@ -43,7 +43,7 @@ port.on('data', async (data) => {
             } else if (reading >= 1022 && reading <= 1023) {
                 execCommand("playerctl next")
             } else {
-                console.log(readableData)
+                console.log(`err btnOneReading: ${readableData}`)
             }
         }
             break;
@@ -55,7 +55,7 @@ port.on('data', async (data) => {
             if (reading >= 1022 && reading <= 1024) {
                 execCommand("playerctl play-pause")
             } else {
-                console.log(readableData)
+                console.log(`err btnTwoReading: ${readableData}`)
             }
         }
             break;
