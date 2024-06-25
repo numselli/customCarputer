@@ -7,58 +7,53 @@ const port = new SerialPort({
 })
 
 port.on('data', async (data) => {
-    const readableData = data.toString()
-    const prams = readableData.split(":")
+    const readings = data.toString().replace(/\r\n/g, "").split("-")
 
-    const catagory = prams[0]
-    const reading = Number(prams[1])
+    console.log(readings)
 
-    switch (catagory) {
-        case "btnOneReading": {
-            if (reading >= 509 && reading <= 517) {
-                return;
-            }
+    const sw0 = Number(readings[0])
+    const sw1 = Number(readings[1])
 
-            if (reading >= 1013 && reading <= 1014) {
-                const volumeMuted = (await execCommand("pactl get-sink-mute @DEFAULT_SINK@")).includes("yes")
+    if (sw0 >= 509 && sw0 <= 517) {
+        return;
+    }
+    if (sw1 >= 509 && sw1 <= 517) {
+        return;
+    }
 
-                if (volumeMuted) {
-                    await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 0")
-                    await execCommand("pactl set-sink-volume @DEFAULT_SINK@ 0")
-                }
+    // const readings = readableData.split("-")
 
-                execCommand("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-            } else if (reading >= 992 && reading <= 994) {
-                await execCommand("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+    if (sw0 >= 1013 && sw0 <= 1014) {
+        const volumeMuted = (await execCommand("pactl get-sink-mute @DEFAULT_SINK@")).includes("yes")
 
-                const volumeLevels = (await execCommand("pactl get-sink-volume @DEFAULT_SINK@"))
-                const volumeLevelArray = volumeLevels.split("/")
-
-                const leftVolume = volumeLevelArray[1].trim()
-                const rightVolume = volumeLevelArray[3].trim()
-
-                if (leftVolume === "0%" && rightVolume === "0%") await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 1")
-            } else if (reading >= 1019 && reading <= 1020) {
-                execCommand("playerctl previous")
-            } else if (reading >= 1022 && reading <= 1023) {
-                execCommand("playerctl next")
-            } else {
-                console.log(`err btnOneReading: ${readableData}`)
-            }
+        if (volumeMuted) {
+            await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 0")
+            await execCommand("pactl set-sink-volume @DEFAULT_SINK@ 0")
         }
-            break;
-        case "btnTwoReading": {
-            if (reading >= 509 && reading <= 517) {
-                return;
-            }
 
-            if (reading >= 1022 && reading <= 1024) {
-                execCommand("playerctl play-pause")
-            } else {
-                console.log(`err btnTwoReading: ${readableData}`)
-            }
-        }
-            break;
+        execCommand("pactl set-sink-volume @DEFAULT_SINK@ +5%")
+    } else if (sw0 >= 992 && sw0 <= 994) {
+        await execCommand("pactl set-sink-volume @DEFAULT_SINK@ -5%")
+
+        const volumeLevels = (await execCommand("pactl get-sink-volume @DEFAULT_SINK@"))
+        const volumeLevelArray = volumeLevels.split("/")
+
+        const leftVolume = volumeLevelArray[1].trim()
+        const rightVolume = volumeLevelArray[3].trim()
+
+        if (leftVolume === "0%" && rightVolume === "0%") await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 1")
+    } else if (sw0 >= 1019 && sw0 <= 1020) {
+        execCommand("playerctl previous")
+    } else if (sw0 >= 1022 && sw0 <= 1023) {
+        execCommand("playerctl next")
+    } else {
+        console.log(`err btnOneReading: ${sw0}`)
+    }
+
+    if (sw1 >= 1022 && sw1 <= 1024) {
+        execCommand("playerctl play-pause")
+    } else {
+        console.log(`err btnTwoReading: ${sw1}`)
     }
 })
 

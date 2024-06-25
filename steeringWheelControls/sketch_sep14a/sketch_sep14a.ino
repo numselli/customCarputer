@@ -16,8 +16,7 @@ void loop(){
   int btnOneReading = averagePinResponce(A6);
   int btnTwoReading = averagePinResponce(A5);
 
-  Serial.println("btnOneReading:"+String(btnOneReading));
-  Serial.println("btnTwoReading:"+String(btnTwoReading));
+  Serial.println(String(btnOneReading)+"-"+String(btnTwoReading));
 
   delay(200);
 }
