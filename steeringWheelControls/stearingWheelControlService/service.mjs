@@ -9,19 +9,8 @@ const port = new SerialPort({
 port.on('data', async (data) => {
     const readings = data.toString().replace(/\r\n/g, "").split("-")
 
-    console.log(readings)
-
     const sw0 = Number(readings[0])
     const sw1 = Number(readings[1])
-
-    if (sw0 >= 509 && sw0 <= 517) {
-        return;
-    }
-    if (sw1 >= 509 && sw1 <= 517) {
-        return;
-    }
-
-    // const readings = readableData.split("-")
 
     if (sw0 >= 1013 && sw0 <= 1014) {
         const volumeMuted = (await execCommand("pactl get-sink-mute @DEFAULT_SINK@")).includes("yes")
