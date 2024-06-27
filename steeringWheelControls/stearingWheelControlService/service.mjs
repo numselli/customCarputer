@@ -35,13 +35,13 @@ port.on('data', async (data) => {
         execCommand("playerctl previous")
     } else if (sw0 >= 1022 && sw0 <= 1023) {
         execCommand("playerctl next")
-    } else {
+    } else if (!(sw0 >= 501 && sw0 <= 521)) {
         console.log(`err btnOneReading: ${sw0}`)
     }
 
     if (sw1 >= 1022 && sw1 <= 1024) {
         execCommand("playerctl play-pause")
-    } else {
+    } else if (!(sw1 >= 501 && sw1 <= 521)) {
         console.log(`err btnTwoReading: ${sw1}`)
     }
 })

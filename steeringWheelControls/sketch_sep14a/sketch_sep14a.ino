@@ -16,11 +16,13 @@ void loop(){
   int btnOneReading = averagePinResponce(A6);
   int btnTwoReading = averagePinResponce(A5);
 
-  if ((btnOneReading >= 501 && btnOneReading <= 521) || (btnTwoReading >= 501 && btnTwoReading <= 521)) {
-    return;
+  if (!(btnOneReading >= 501 && btnOneReading <= 521)) {
+    Serial.println(String(btnOneReading)+"-"+String(btnTwoReading));
   }
 
-  Serial.println(String(btnOneReading)+"-"+String(btnTwoReading));
+  if (!(btnTwoReading >= 501 && btnTwoReading <= 521)) {
+    Serial.println(String(btnOneReading)+"-"+String(btnTwoReading));
+  }
 
   delay(200);
 }
