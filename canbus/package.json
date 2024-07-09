@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "socketcan": "^4.0.4"
+    "@fastify/static": "^7.0.4",
+    "fastify": "^4.28.1",
+    "socketcan": "^4.0.4",
+    "ws": "^8.17.1"
   }
 }

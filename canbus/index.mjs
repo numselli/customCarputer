@@ -1,6 +1,31 @@
 import * as can from "socketcan";
+import Fastify from 'fastify'
+import fastifyStatic from '@fastify/static'
+import { WebSocketServer } from 'ws';
+import path from 'path'
 
-const channel = can.createRawChannel("can0", true);
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+// const channel = can.createRawChannel("can0", true);
+const fastify = Fastify()
+fastify.register(fastifyStatic, {
+    root: path.resolve("./site/")
+})
+
+const wss = new WebSocketServer({
+    server: fastify.server,
+    path: "/ws"
+});
+
+setInterval(()=>{
+    wss.clients.forEach((k)=>{
+        if (k.OPEN) k.send(JSON.stringify(["brakes", getRndInteger(0,100)]))
+        if (k.OPEN) k.send(JSON.stringify(["gas", getRndInteger(0,100)]))
+        if (k.OPEN) k.send(JSON.stringify(["speed", getRndInteger(0,100)]))
+        if (k.OPEN) k.send(JSON.stringify(["stearingangle", getRndInteger(-180,180)]))
+    })
+}, 100)
 
 const IDs = new Map()
 // drive mode
@@ -33,70 +58,76 @@ IDs.set(580, {
 })
 
 // 1480 cuse controll actave
-channel.addListener("onMessage", function (msg) {
-    let json = JSON.stringify(msg.data);
-    let buginal = JSON.parse(json).data
-    
-    // if (msg.id === 1389) return console.log(buginal)
-    if (IDs.has(msg.id)){
-        const id = IDs.get(msg.id)
+// channel.addListener("onMessage", function (msg) {
+//     // let json = JSON.stringify(msg.data);
+//     // let buginal = JSON.parse(json).data
+//     // if (msg.id === 1389) return console.log(buginal)
 
-        let json = JSON.stringify(msg.data);
-        let bufferOriginal = JSON.parse(json).data
+//     if (IDs.has(msg.id)){
+//         const id = IDs.get(msg.id)
 
-        if (id.lastData !== bufferOriginal.join()){
-            id.lastData=bufferOriginal.join()
-            IDs.set(msg.id, id)
+//         let json = JSON.stringify(msg.data);
+//         let bufferOriginal = JSON.parse(json).data
 
-            msg.bufferOriginal = bufferOriginal
-            changedData(msg)
-        }
-    }
-});
+//         if (id.lastData !== bufferOriginal.join()){
+//             id.lastData=bufferOriginal.join()
+//             IDs.set(msg.id, id)
 
-function changedData(msg){
-    switch(msg.id){
-        case 288:{
-            switch (msg.bufferOriginal[msg.bufferOriginal.length-1]){
-                case 77:{
-                    console.log("car in park")
-                }break;
-                case 80:{
-                    console.log("car in drive")   
-                }break;
-                case 79:{
-                    console.log("car in nutural")   
-                }break;
-                case 78:{
-                    console.log("car in reverse")   
-                }break;
-                case 81:{
-                    console.log("car in 'B'")   
-                }break;
-            }
+//             msg.bufferOriginal = bufferOriginal
+//             changedData(msg)
+//         }
+//     }
+// });
 
-        }break;
-        // case 48:{
-        //     console.log(`Brake Pedal Position: ${((msg.bufferOriginal[4]/127)*100).toFixed(2)}%`)
-        // }break;
-        case 971: {
-            console.log(`HV SOC: ${msg.bufferOriginal[6]}%`)
-        }break;
-        case 1321: {
-            console.log(msg.bufferOriginal[4] === 0 ? "evmode off" : "evmode on")
-        }break;
-        case 1444: {
-            console.log(`gas tank: ${((msg.bufferOriginal[1]/44)*100).toFixed(2)}%`)
-        }break;
-        case 970: {
-            console.log(`${msg.bufferOriginal[2]}KM/h`)   
-        }break;
-        case 580: {
-            console.log(`Throttle Pedal Position: ${((msg.bufferOriginal[6]/200)*100).toFixed(2)}%`)
-        }break;
-    }
-}
+// function changedData(msg){
+//     switch(msg.id){
+//         case 288:{
+//             switch (msg.bufferOriginal[msg.bufferOriginal.length-1]){
+//                 case 77:{
+//                     console.log("car in park")
+//                 }break;
+//                 case 80:{
+//                     console.log("car in drive")   
+//                 }break;
+//                 case 79:{
+//                     console.log("car in nutural")   
+//                 }break;
+//                 case 78:{
+//                     console.log("car in reverse")   
+//                 }break;
+//                 case 81:{
+//                     console.log("car in 'B'")   
+//                 }break;
+//             }
+
+//         }break;
+//         // case 48:{
+//         //     console.log(`Brake Pedal Position: ${((msg.bufferOriginal[4]/127)*100).toFixed(2)}%`)
+//         // }break;
+//         case 971: {
+//             console.log(`HV SOC: ${msg.bufferOriginal[6]}%`)
+//         }break;
+//         case 1321: {
+//             console.log(msg.bufferOriginal[4] === 0 ? "evmode off" : "evmode on")
+//         }break;
+//         case 1444: {
+//             console.log(`gas tank: ${((msg.bufferOriginal[1]/44)*100).toFixed(2)}%`)
+//         }break;
+//         case 970: {
+//             console.log(`${msg.bufferOriginal[2]}KM/h`)   
+//         }break;
+//         case 580: {
+//             console.log(`Throttle Pedal Position: ${((msg.bufferOriginal[6]/200)*100).toFixed(2)}%`)
+//         }break;
+//     }
+// }
 
 // channel.addListener("onMessage", channel.send, channel);
 
-channel.start();
+// channel.start();
+
+
+// Run the server!
+fastify.listen({ port: 3000 }, (err, address) => {
+  if (err) throw err
+})

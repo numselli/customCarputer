@@ -1,0 +1,28 @@
+<body>
+    <div>
+        brakes
+        <progress id="brakes" max="100" value="0"></progress>
+    </div>
+
+    <div>
+        gas
+        <progress id="gas" max="100" value="0"></progress>
+    </div>
+
+    <div>
+        speed
+        <progress id="speed" max="100" value="0"></progress>
+    </div>
+
+    <div>
+        stearing angle
+        <progress id="stearingangle" max="100" value="0"></progress>
+    </div>
+</body>
+<script>
+    const s = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`);
+    s.onmessage = e => {
+        const data = JSON.parse(e.data)
+        document.getElementById(data[0]).value = data[1]
+    };
+</script>
