@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=dispatcherService
+GenericName=dispatcherService
+Exec=node /home/user/customCarputer/dispatcher/service.mjs
+Terminal=false
