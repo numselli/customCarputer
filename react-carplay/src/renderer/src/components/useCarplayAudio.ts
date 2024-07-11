@@ -9,9 +9,12 @@ import { PcmPlayer } from 'pcm-ringbuf-player'
 import { AudioPlayerKey, CarPlayWorker } from './worker/types'
 import { createAudioPlayerKey } from './worker/utils'
 
+const ws = new WebSocket("ws://localhost:8095")
+
 //TODO: allow to configure
 const defaultAudioVolume = 1
 const defaultNavVolume = 0.5
+
 
 const useCarplayAudio = (
   worker: CarPlayWorker,
@@ -53,8 +56,12 @@ const useCarplayAudio = (
       } else if (audio.command) {
         switch (audio.command) {
           case AudioCommand.AudioNaviStart:
+            if (ws.readyState===1) ws.send('{"catagory":"navi","state":"start"}')
             const navPlayer = getAudioPlayer(audio)
             navPlayer.volume(defaultNavVolume)
+            break
+          case AudioCommand.AudioNaviStop:
+            if (ws.readyState===1) ws.send('{"catagory":"navi","state":"stop"}')
             break
           case AudioCommand.AudioMediaStart:
           case AudioCommand.AudioOutputStart:
