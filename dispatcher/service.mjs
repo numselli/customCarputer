@@ -16,9 +16,11 @@ wss.on('connection', function connection(ws) {
         switch(parsedData.state){
           case "start":{
             // lower volume
+            execCommand("playerctl pause")
           }break;
           case "stop":{
             // raise volume up
+            execCommand("playerctl play")
           }break;
         }
       }break;
