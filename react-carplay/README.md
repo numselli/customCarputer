@@ -1,5 +1,6 @@
-# React-Carplay
+# deprecated use mainApp
 
+# React-Carplay
 # Clone of [React-Carplay](https://github.com/rhysmorgan134/react-carplay) with some modifications. Modifications includes:
 - Fix audio not playing ([Issue #66](https://github.com/rhysmorgan134/react-carplay/issues/66))
 - Change name and icon to `CarPlay`
