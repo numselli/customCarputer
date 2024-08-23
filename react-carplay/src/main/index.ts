@@ -31,7 +31,6 @@ const DEFAULT_BINDINGS: KeyBindings = {
 const EXTRA_CONFIG: ExtraConfig = {
   ...DEFAULT_CONFIG,
   kiosk: true,
-  camera: '',
   microphone: '',
   piMost: false,
   canbus: false,

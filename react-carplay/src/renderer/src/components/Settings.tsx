@@ -42,7 +42,7 @@ const Transition = React.forwardRef(function Transition(
 
 function Settings({ settings }: SettingsProps) {
   const [activeSettings, setActiveSettings] = useState<ExtraConfig>(settings)
-  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
+  const [cameras] = useState<MediaDeviceInfo[]>([])
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([])
   const [openStream, setOpenStream] = useState<boolean>(false)
   const [openBindings, setOpenBindings] = useState<boolean>(false)
@@ -201,22 +201,16 @@ function Settings({ settings }: SettingsProps) {
   useEffect(() => {
     if(!navigator.mediaDevices?.enumerateDevices) {
       setMicrophones([])
-      setCameras([])
     } else {
       navigator.mediaDevices
         .enumerateDevices()
         .then((devices) => {
           const microphones: MediaDeviceInfo[] = []
-          const webcams: MediaDeviceInfo[] = []
           devices.forEach((device) => {
             if(device.kind === "audioinput") {
               microphones.push(device)
-            } else if (device.kind === "videoinput") {
-              webcams.push(device)
             }
           })
-          console.log(webcams, microphones)
-          setCameras(webcams)
           setMicrophones(microphones)
         })
     }
@@ -228,7 +222,6 @@ function Settings({ settings }: SettingsProps) {
           return renderInput[k]?.()
         })}
         <Grid xs={12} container>
-          {cameras.length > 0 ? renderCameras() : null}
           {microphones.length > 0 ? renderMicrophones() : null}
         </Grid>
         <Grid xs={12} >

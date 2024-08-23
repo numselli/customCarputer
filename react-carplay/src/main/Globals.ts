@@ -7,7 +7,6 @@ export type Most = {
 
 export type ExtraConfig = DongleConfig & {
   kiosk: boolean,
-  camera: string,
   microphone: string,
   piMost: boolean,
   canbus: boolean,
