@@ -7,7 +7,5 @@
 ## Directory structure:
 - deprecated
     - code made for this project that is no longer used
-- steeringWheelControls
-    - Integration to control linux media players using the cars steering wheel controls
 - resources
     - Static reference resources
