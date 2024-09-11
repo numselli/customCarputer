@@ -32,7 +32,7 @@ interface CarplayProps {
   commandCounter: number
 }
 
-function Carplay({ receivingVideo, setReceivingVideo, settings, command, commandCounter }: CarplayProps) {
+function Carplay({setReceivingVideo, settings, command, commandCounter }: CarplayProps) {
   const [isPlugged, setPlugged] = useState(false)
   const [deviceFound, setDeviceFound] = useState(false)
   const navigate = useNavigate()
@@ -44,7 +44,6 @@ function Carplay({ receivingVideo, setReceivingVideo, settings, command, command
   )
   const mainElem = useRef<HTMLDivElement>(null)
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const stream = useCarplayStore(state => state.stream)
   const config = {
     fps: settings.fps,
     width: width,
@@ -107,10 +106,6 @@ function Carplay({ receivingVideo, setReceivingVideo, settings, command, command
       switch (type) {
         case 'plugged':
           setPlugged(true)
-          if(settings.piMost && settings?.most?.stream) {
-            console.log("setting most stream")
-            stream(settings.most.stream)
-          }
           break
         case 'unplugged':
           setPlugged(false)

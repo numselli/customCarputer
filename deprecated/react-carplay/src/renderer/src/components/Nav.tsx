@@ -6,7 +6,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Link, useLocation } from "react-router-dom";
 import ExitToApp from '@mui/icons-material/ExitToApp';
 
-export default function Nav({ receivingVideo, settings }) {
+export default function Nav({ receivingVideo }) {
   const [value, setValue] = React.useState(0);
   const { pathname } = useLocation()
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
