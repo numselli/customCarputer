@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Spoti
-GenericName=stearingWheelControlService
-
-Exec=node /home/user/stearingWheelControlService/service.mjs
-Terminal=false

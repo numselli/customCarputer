@@ -5,7 +5,5 @@
 - documation is minimal as the code in this repo was only intended for my use. I am trying to add some documation so if someone else wants to use this as a "guide" they can (hopefully).
 
 ## Directory structure:
-- deprecated
-    - code made for this project that is no longer used
 - resources
     - Static reference resources
