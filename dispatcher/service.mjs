@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws'
 import { SerialPort } from "serialport";
+import { DelimiterParser } from "@serialport/parser-delimiter"
 import { exec } from "child_process";
 
 const wss = new WebSocketServer({
@@ -15,11 +16,9 @@ wss.on('connection', function connection(ws) {
       case "navi":{
         switch(parsedData.state){
           case "start":{
-            // lower volume
             execCommand("playerctl pause")
           }break;
           case "stop":{
-            // raise volume up
             execCommand("playerctl play")
           }break;
         }
@@ -38,18 +37,15 @@ function brodcastWSS(data){
   })
 }
 
-// can bus stuff
-
-
-
 // serial
 // steeringWheelControls
 const port = new SerialPort({
   path: '/dev/ttyUSB0',
   baudRate: 9600,
 })
+const parser = port.pipe(new DelimiterParser({ delimiter: '\n' }))
 
-port.on('data', async (data) => {
+parser.on('data', async (data) => {
   const moddedData = data.toString().replace(/\r\n/g, "")
 
   if (moddedData.includes("-")) {
@@ -96,25 +92,16 @@ port.on('data', async (data) => {
   }
 })
 
-
-// AVIC-LAN
-
-
-
 // util functions
 function execCommand(command) {
   return new Promise((resolve, reject) => {
-      exec(command, (error, stdout, stderr) => {
-          if (error) {
-              reject(error)
-              return;
-          }
-          if (stderr) {
-              reject(stderr)
-              return;
-          }
+    exec(command, (error, stdout, stderr) => {
+      if (error || stderr) {
+        reject(error ? error : stderr)
+        return;
+      }
 
-          resolve(stdout)
-      });
+      resolve(stdout)
+    });
   });
 }
