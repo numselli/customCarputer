@@ -1,0 +1,14 @@
+[Unit]
+Description=SW controls
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /home/user/Downloads/dispatcher/service.mjs
+WorkingDirectory=/home/user/Downloads/dispatcher
+Restart=on-failure
+RestartSec=2
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=default.target
