@@ -31,6 +31,16 @@ wss.on('connection', function connection(ws) {
 
 });
 
+function genPercentRange(input, target){
+  const percent = 0.01;
+  
+  const percentFactor = (percent/100)*target
+  const min = Math.floor(target-percentFactor)
+  const max = Math.ceil(target+percentFactor)
+
+  return input >= min && input <= max
+}
+
 // serial
 // steeringWheelControls
 const port = new SerialPort({
@@ -48,7 +58,7 @@ parser.on('data', async (data) => {
     const sw0 = Number(readings[0])
     const sw1 = Number(readings[1])
 
-    if (sw0 == 930) {
+    if (genPercentRange(sw0, 930)) {
       const volumeMuted = (await execCommand("pactl get-sink-mute @DEFAULT_SINK@")).includes("yes")
 
       if (volumeMuted) {
@@ -57,7 +67,7 @@ parser.on('data', async (data) => {
       }
 
       execCommand("pactl set-sink-volume @DEFAULT_SINK@ +5%")
-    } else if (sw0 == 780) {
+    } else if (genPercentRange(sw0, 780)) {
       await execCommand("pactl set-sink-volume @DEFAULT_SINK@ -5%")
 
       const volumeLevels = (await execCommand("pactl get-sink-volume @DEFAULT_SINK@"))
@@ -67,15 +77,15 @@ parser.on('data', async (data) => {
       const rightVolume = volumeLevelArray[3].trim()
 
       if (leftVolume === "0%" && rightVolume === "0%") await execCommand("pactl set-sink-mute @DEFAULT_SINK@ 1")
-    } else if (sw0 >= 990 && sw0 <= 991) {
+    } else if (genPercentRange(sw0, 990)) {
       execCommand("playerctl previous")
-    } else if (sw0 >= 1022 && sw0 <= 1023) {
+    } else if (genPercentRange(sw0, 1022)) {
       execCommand("playerctl next")
     } else {
       console.log(`err btnOneReading: ${sw0}`)
     }
 
-    if (sw1 >= 1022 && sw1 <= 1024) {
+    if (genPercentRange(sw1, 1022)) {
       execCommand("playerctl play-pause")
     } else {
       console.log(`err btnTwoReading: ${sw1}`)
