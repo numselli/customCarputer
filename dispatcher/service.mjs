@@ -32,7 +32,7 @@ wss.on('connection', function connection(ws) {
 });
 
 function genPercentRange(input, target){
-  const percent = 0.01;
+  const percent = 0.1;
   
   const percentFactor = (percent/100)*target
   const min = Math.floor(target-percentFactor)
